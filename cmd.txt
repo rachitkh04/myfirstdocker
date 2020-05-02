@@ -2,3 +2,31 @@
 
 docker pull mysql:5.7
 docker pull owncloud:latest
+
+#create volumes
+
+docker volume create mysql_storage
+docker volume create owncloud_storage
+#create a network
+
+docker network create --driver bridge owncloud
+
+#run database conatainer 
+
+docker run -d -it -e MYSQL_ROOT_PASSWORD=root  -e MYSQL_USER=rachit -e MYSQL_PASSWORD=rachit  -e MYSQL_DATABASE=mydb -v mysql_storage:/var/lib/mysql --network owncloud --name dbos mysql:5.7
+
+#look for ip of any container
+
+docker inspect <id> | grep IP
+
+#download mqsql client to access database
+
+yum install mysql
+
+#access database
+
+mysql -f -h 172.17.0.2 -u rachit -prachit
+
+#run owncloud container
+
+docker run -it -e MYSQL_DATABASE=mydb -e MYSQL_USER=rachit -e MYSQL_PASSWORD=rachit -e MYSQL_HOST=dbos -v owncloud_storage:/var/www/html --link dbos --name owncloudos --network owncloud -p 4042:80 -d owncloud
