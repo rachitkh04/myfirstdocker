@@ -1,0 +1,4 @@
+##to download docker images
+
+docker pull mysql:5.7
+docker pull owncloud:latest
